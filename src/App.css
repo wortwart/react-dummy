@@ -1,16 +1,6 @@
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 .App {
   text-align: center;
   font-size: large;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
 }
 
 .App-header {
@@ -27,7 +17,37 @@ textarea {
 }
 
 .Output {
-  width: 40rem;
-  margin: auto;
+  width: 38rem;
+  margin: 0 auto;
+  padding: 0.5em 1em;
   text-align: left;
+  background-color: beige;
+}
+
+li {
+  font-weight: normal;
+}
+
+.urls + ul > li {
+  margin-bottom: 1em;
+  font-weight: bold;
+}
+
+ul ul {
+  list-style-type: none;
+}
+
+dfn {
+  display: block;
+  margin-left: -.5em;
+}
+
+dfn::after {
+  content: ':';
+}
+
+.Output img {
+  max-width: 25em;
+  max-height: 25em;
+  margin: .5em 0;
 }

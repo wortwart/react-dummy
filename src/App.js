@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './App.css';
 
+// RegExps for queries
 const reUrl = /https?:\/\/[\w.-]+?\.\w{2,9}(?:\/(?:[^\s]*[\w\/-])?)?/gi;
 const reUser = /(@\w+)/g;
 const reTag = /(#\w+)/g;
@@ -37,10 +38,11 @@ class App extends Component {
 				} catch(er) {
 					console.error('Kein gültiges JSON', er, url, ev.target.responseText);
 				}
-				this.state.urlData.set(url, json);
-				this.setState({'lastUpdate': Date.now()});
+				let myMap = this.state.urlData;
+				myMap.set(url, json);
+				this.setState({urlData: myMap})
+				this.setState({lastUpdate: Date.now()}); // necessary for output update
 				console.info('Update ' + url, this.state.urlData);
-				this.forceUpdate();
 			} else {
 				console.error('Probleme mit URL ' + url, ev.target.status);
 			}
@@ -62,10 +64,12 @@ class App extends Component {
 				this.request(url);
 			});
 			// clean obsolete URL data
-			this.state.urlData.forEach((val, key) => {
+			let myMap = this.state.urlData;
+			myMap.forEach((val, key) => {
 				if (urls.indexOf(key) < 0)
-					this.state.urlData.delete(key);
+					myMap.delete(key);
 			});
+			this.setState({urlData: myMap});
 		}
 
 		this.setState({
@@ -73,7 +77,7 @@ class App extends Component {
 			usernames: text.match(reUser),
 			tags: text.match(reTag)
 		}, () => {
-			this.setState({'lastUpdate': Date.now});
+			this.setState({'lastUpdate': Date.now()});
 		});
 	}
 
@@ -110,11 +114,11 @@ class Output extends Component {
 			return(<div className="Output"></div>);
 		return(
 		  <div className="Output">
-		  	<h3>URLs</h3>
+		  	<h3 className="urls">URLs</h3>
 				<List data={this.props.urlData}/>
-				<h3>Benutzer</h3>
+				<h3 className="usernames">Benutzer</h3>
 				<List data={this.props.usernames}/>
-				<h3>Tags</h3>
+				<h3 className="tags">Tags</h3>
 				<List data={this.props.tags}/>
 			</div>
 		);
@@ -171,7 +175,6 @@ class UrlProp extends Component {
 			if (typeof val === 'string') {
 				items.push(<li key={el}><dfn>{el}</dfn> {val}</li>);
 			} else if (typeof val === 'object') {
-				console.log(val);
 				Object.keys(val).forEach((subEl) => {
 					let subVal = val[subEl];
 					let desc = (val.constructor === Array)? el + '.' + subEl : subEl;
@@ -198,29 +201,28 @@ class UrlProp extends Component {
 /*
 App.defaultProps = {
 	input: `Hey, @bl!
-	https://heise.de/
-	http://woerter.de/index.html
-	https://ct.de.
-	http://ct.de/?x=1
-	#tag #tag2
-	@wortwart
-	`
+https://heise.de/
+http://woerter.de/index.html
+https://ct.de.
+http://ct.de/?x=1
+#tag #tag2
+@wortwart`
 }
 */
+
 App.defaultProps = {
 	input: `Hey, @bl!
-	https://heise.de/
-	https://amazon.com!
-	#tag #tag2
-	@wortwart
-	`
+https://heise.de/
+https://amazon.com!
+#tag #tag2
+@wortwart`
 }
+
 /*
 App.defaultProps = {
 	input: `Hey, @bl!
-	#tag #tag2
-	@wortwart
-	`
+#tag #tag2
+@wortwart`
 }
 */
 
